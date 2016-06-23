@@ -1,0 +1,22 @@
+CREATE FUNCTION [dbo].GetMostRecentSale
+(
+	@prodid int
+)
+RETURNS datetime
+AS
+BEGIN
+	declare @dt datetime
+
+	select  @dt = max(transdate)
+	from sales
+	where prodid = @prodid;
+
+	return @dt
+END
+
+
+How to call
+===========
+
+select prodname, dbo.GetMostRecentSale(prodid)
+from products
