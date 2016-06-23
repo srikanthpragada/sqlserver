@@ -1,0 +1,16 @@
+CREATE PROCEDURE [dbo].[GetPriceRange] (@lowprice money output, @highprice  money output)
+as
+	select @lowprice =  min(price), 
+	       @highprice = max(price)
+	from products;
+	
+
+How to Call
+============
+
+declare @low money, @high money
+
+execute GetPriceRange @low output,@high output
+
+print @low
+print @high
