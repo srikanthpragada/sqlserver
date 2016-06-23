@@ -1,0 +1,26 @@
+CREATE PROCEDURE AddSale(@prodid int,@qty int)
+AS
+declare @price money
+declare @qoh  int
+declare @msg nvarchar(4000)
+
+begin transaction 
+begin try 
+	select @price = price, @qoh = qoh from products where prodid = @prodid;
+
+	if @qoh < @qty 
+	  begin
+	      raiserror('Insufficient Stock',16,1);
+      end;
+  
+    update products set qoh = qoh - @qty 
+	where  prodid = @prodid;
+
+	insert into sales values( @prodid, GetDate (), @qty, @qty*@price);
+    commit transaction; 
+end try
+begin catch
+      select @msg = error_message() 
+	  rollback transaction;
+      raiserror(@msg , 16,1);
+end catch
