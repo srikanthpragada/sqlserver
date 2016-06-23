@@ -1,0 +1,32 @@
+CREATE FUNCTION [dbo].[GetProductsByCategory](@catcode varchar(10)) RETURNS varchar(200)
+AS
+BEGIN
+     declare @prods varchar(200); 
+	 declare @prodname varchar(50);
+	 declare prodcur cursor for select prodname from products where catcode = @catcode;
+
+	 open prodcur;
+	 fetch next from prodcur into @prodname;
+	 
+	 select @prods = null 
+
+	 while @@FETCH_STATUS = 0 
+	 begin
+	     if @prods is null 
+	         select @prods = @prodname;
+         else
+		     select @prods = @prods + ',' + @prodname;
+       
+	     fetch next from prodcur into @prodname;
+     end;
+
+	 close prodcur;
+	 deallocate prodcur;
+	 return @prods; 
+END
+
+How to call
+=============
+select catdesc, dbo.GetProductsByCategory(catcode)
+from categories 
+
