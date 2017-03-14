@@ -1,0 +1,27 @@
+
+/* decrease price if qty sold is less than 20 units  */
+create procedure DecreasePrice(@prodid int)
+as
+declare @totalqty int
+
+if not exists (select * from products where prodid = @prodid)
+  begin
+      raiserror('Invalid Product Id',10,1)
+  end
+  
+select @totalqty = sum(qty) 
+from sales
+where prodid = @prodid;
+
+if @totalqty < 20 
+  begin
+    update products set price = price * 0.9
+	where prodid = @prodid;
+  end
+
+
+--------------
+Calling 
+--------------
+
+execute DecreasePrice 202
