@@ -1,0 +1,49 @@
+/* CATEGORIES */
+create table categories
+(
+ catcode varchar(10) constraint categories_pk primary key,
+ catdesc varchar(50) constraint categories_catdesc_nn not null
+)
+
+/* PRODUCTS */
+create table products
+(
+ prodid int identity (100,1) constraint products_pk primary key,
+ prodname varchar(30) constraint products_prodname_nn not null,
+ price money constraint products_price_chk check ( price >= 0 ),
+ qoh int default 0,
+ remarks varchar(100),
+ catcode varchar(10) constraint products_catcode_fk references  categories(catcode) on delete cascade
+)
+
+/* SALES */
+
+create table sales
+( 
+ invno int identity constraint sales_invno_pk primary key,
+ prodid int constraint sales_prodid_fk references products(prodid),
+ transdate datetime,
+ qty int constraint sales_qty_chk check(qty > 0 ),
+ amount money
+);
+
+/* Add rows to CATEGORIES */
+insert into categories values ('hd','Hard Disk');
+insert into categories values ('pr','Printer');
+insert into categories values ('ud','USB Device');
+insert into categories values ('mo','Monitor');
+
+/* Add rows to Products */
+insert into products values('Segate Hard Disk 200 MB',3000,10,'5 years warrenty','hd');
+insert into products values('Transcend Pen Drive 2 GB',500,3,'3 years warrenty','ud');
+insert into products values('HP LaserJet 1020',4500,5,'Low printing cost','pr');
+
+/* Add rows to SALES */
+insert into sales values (100,'5/5/16',1,2800);
+insert into sales values (101,'5/5/16',1,550);
+insert into sales values (101,'5/7/16',2,900);
+insert into sales values (102,'5/8/16',1,4500);
+
+
+
+insert into sales values (100,'5/15/08',3,8000);
