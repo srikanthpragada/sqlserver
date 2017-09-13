@@ -1,0 +1,26 @@
+declare products_cursor cursor for 
+       select prodid, prodname from dbo.products;
+
+declare @prodid int 
+declare @prodname varchar(50)
+declare @totalsales money 
+
+open products_cursor;
+
+fetch next from products_cursor into @prodid, @prodname;
+
+while @@fetch_status = 0
+begin
+    /* get total sales for current product */
+
+    select @totalsales =  isnull(sum(amount),0)
+    from sales
+    where prodid = @prodid;
+
+    print @prodname + replicate(' ', 30 - len(@prodname)) + '  ' + str(@totalsales,10);
+    fetch from products_cursor into @prodid, @prodname;
+end;
+
+close products_cursor;
+deallocate products_cursor;
+
