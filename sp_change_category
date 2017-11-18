@@ -1,0 +1,13 @@
+create procedure  sp_change_category(@prodid int, @category varchar(10))
+AS
+if exists(select * from products where prodid = @prodid)
+begin
+  begin try 
+    update products set catcode = @category where prodid = @prodid 
+  end try
+  begin catch
+    raiserror('Invalid category code',16,1)
+  end catch
+end
+else
+    raiserror('Invalid Product ID',16,1)
