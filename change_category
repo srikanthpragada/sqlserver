@@ -1,0 +1,19 @@
+CREATE PROCEDURE [dbo].[change_category]
+	@prodid int,
+	@newcat varchar(10)
+AS
+    if not exists(select * from products where prodid = @prodid)
+	   return 1   /* prodid not found */
+  
+    if not exists(select * from categories where catcode = @newcat)
+	   return 2   /* category code  not found */
+
+	begin try 
+        update products set catcode = @newcat
+	    where prodid = @prodid;
+		
+		return 0  /* success */
+    end try
+    begin catch
+       return 3  /* error */
+    end catch 
